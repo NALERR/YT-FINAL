@@ -50,7 +50,7 @@ app.post('/transcribir', async (req, res) => {
 
     let salida = '';
     python.stdout.on('data', (data) => {
-      salida += data.toString();
+      salida += data.toString('utf-8');
     });
 
     python.stderr.on('data', (data) => {

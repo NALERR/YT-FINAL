@@ -25,10 +25,12 @@ formulario.addEventListener('submit', function (e) {
     const data = JSON.parse(text);
     if (data.texto) {
       resultado.innerHTML = `
-        <p class="mb-4 whitespace-pre-wrap">${data.texto}</p>
+        <p class="whitespace-pre-wrap text-justify leading-relaxed">${data.texto}</p>
+        <div class="text-right">
         <a href="${data.archivo}" download class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
           Descargar transcripción
         </a>
+        </div>
       `;
     } else {
       resultado.textContent = 'No se pudo transcribir.';

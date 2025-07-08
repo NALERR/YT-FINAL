@@ -3,6 +3,7 @@ import whisper
 import warnings
 
 warnings.filterwarnings("ignore")
+sys.stdout.reconfigure(encoding='utf-8')
 
 if len(sys.argv) <2:
     sys.exit(1)
