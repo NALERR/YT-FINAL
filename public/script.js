@@ -15,15 +15,29 @@ formulario.addEventListener('submit', function (e) {
     },
     body: JSON.stringify({ url: enlace })
   })
-  .then(res => res.json())
-  .then(data => {
+
+
+.then(async (res) => {
+  const text = await res.text();
+  console.log('Respuesta sin parsear:', text);
+
+  try {
+    const data = JSON.parse(text);
     if (data.texto) {
-      resultado.textContent = data.texto;
+      resultado.innerHTML = `
+        <p class="mb-4 whitespace-pre-wrap">${data.texto}</p>
+        <a href="${data.archivo}" download class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+          Descargar transcripción
+        </a>
+      `;
     } else {
       resultado.textContent = 'No se pudo transcribir.';
     }
-  })
-  .catch(err => {
-    resultado.textContent = 'Error: ' + err.message;
-  });
+  } catch (e) {
+    resultado.textContent = 'Respuesta inválida del servidor:\n' + text;
+  }
+})
+
+
+
 });

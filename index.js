@@ -2,9 +2,6 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const axios = require('axios');
-const FormData = require('form-data');
-require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
@@ -48,33 +45,48 @@ app.post('/transcribir', async (req, res) => {
 
     console.log('Audio descargado:', rutaAudio);
 
-    const form = new FormData();
-    form.append('file', fs.createReadStream(rutaAudio));
-    form.append('model', 'whisper-1');
+    // Ejecutar script Python con Whisper local
+    const python = spawn('python', ['transcribir.py', rutaAudio]);
+
+    let salida = '';
+    python.stdout.on('data', (data) => {
+      salida += data.toString();
+    });
+
+    python.stderr.on('data', (data) => {
+      console.error('Error Python:', data.toString());
+    });
+    
+    python.on('close', (code) => {
+  const textoLimpio = salida.trim();
+
+  // ⚠️ Asegúrate de que solo respondemos una vez
+  if (res.headersSent) return;
+
+  if (code === 0 && textoLimpio.length > 0) {
+    const nombreTexto = `transcripcion-${Date.now()}.txt`;
+    const rutaTexto = path.join(__dirname, 'public', nombreTexto);
 
     try {
-      const respuesta = await axios.post('https://api.openai.com/v1/audio/transcriptions', form, {
-        headers: {
-          ...form.getHeaders(),
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
-        }
+      fs.writeFileSync(rutaTexto, textoLimpio, 'utf-8');
+      res.json({
+        texto: textoLimpio,
+        archivo: `/${nombreTexto}`
       });
-
-      const texto = respuesta.data.text;
-      res.json({ texto });
-
-      fs.unlink(rutaAudio, (err) => {
-        if (err) {
-          console.log('No se pudo borrar el audio:', err);
-        } else {
-          console.log('Audio borrado');
-        }
-      });
-
     } catch (err) {
-      console.log('Error al transcribir:', err.message);
-      res.status(500).send('Error al transcribir');
+      console.error('Error al guardar archivo:', err);
+      res.status(500).json({ error: 'No se pudo guardar el archivo' });
     }
+  } else {
+    res.status(500).json({ error: 'Error al ejecutar la transcripción' });
+  }
+
+  // ⚠️ fs.unlink va después, pero no debe tener res.json dentro
+  fs.unlink(rutaAudio, (err) => {
+    if (err) console.log('No se pudo borrar el audio:', err);
+  });
+});
+
   });
 });
 
