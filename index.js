@@ -68,7 +68,10 @@ app.post('/transcribir', async (req, res) => {
     const rutaTexto = path.join(__dirname, 'public', nombreTexto);
 
     try {
-      fs.writeFileSync(rutaTexto, textoLimpio, 'utf-8');
+
+      fs.writeFileSync(rutaTexto, textoLimpio, 'UTF-8');
+
+      res.setHeader('Content-Type','application/json; charset=utf-8')
       res.json({
         texto: textoLimpio,
         archivo: `/${nombreTexto}`
