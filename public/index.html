@@ -4,24 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Transcriptor YouTube</title>
+  <link rel="icon" type="image/png" href="img/lapiz.png">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
-  <h1 class="text-3xl font-bold mb-6">Transcriptor de Videos de YouTube</h1>
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 flex flex-col items-center justify-center min-h-screen p-4 font-sans">
 
-  <form id="form" class="w-full max-w-lg bg-white p-6 rounded shadow">
-    <label for="url" class="block mb-2 font-semibold">URL del video de YouTube:</label>
-    <input type="text" id="url" name="url" placeholder="https://www.youtube.com/watch?v=..." required class="w-full p-2 border border-gray-300 rounded mb-4"
+  <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">
+    Transcriptor de Videos de YouTube
+  </h1>
+
+  <form id="form" class="w-full max-w-lg bg-white p-6 rounded-2xl shadow-lg space-y-4 border border-gray-200">
+    <label for="url" class="block text-gray-700 font-medium">URL del video:</label>
+    <input
+      type="text"
+      id="url"
+      name="url"
+      placeholder="https://www.youtube.com/watch?v=..."
+      required
+      class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
-    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition flex justify-center items-center">
-      Transcribir
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition duration-200 flex justify-center items-center gap-2"
+    >
+      <span id="spinner" class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-white border-opacity-50"></span>
+      <span>Transcribir</span>
     </button>
   </form>
 
-  <div
-    id="resultado"
-    class="mt-6 w-full max-w-3xl bg-white p-6 rounded shadow whitespace-pre-wrap"
-  ></div>
+  <div id="resultado" class="mt-8 w-full max-w-3xl bg-white p-6 rounded-xl shadow-md whitespace-pre-wrap text-gray-800 border border-gray-200"></div>
 
   <script src="script.js"></script>
 </body>
